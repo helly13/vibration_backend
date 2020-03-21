@@ -9,7 +9,7 @@ localhost:3000/forgot // for email to send otp
 After that the next page is
 localhost:3000/reset // to enter otp and set new password 
 
-localhost:3000.about // to see the profile
+localhost:3000/about // to see the profile
 
 localhost:3000/admin_core // admin_panel for Core Committee 
 
