@@ -18,5 +18,6 @@ Currently Working on it add_event has been done now and design modification of t
 login Credentials:
 sharma.aman1298@gmail.com
 password:xyz$123
+Run the server by:- node app.js
 
 
