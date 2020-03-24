@@ -19,6 +19,7 @@ app.set("views","views");
 app.use(session({secret:"aman",resave:false,saveUninitialized:false}));
 app.use(express.static(path.join(__dirname,"views")));
 app.use(express.static(path.join(__dirname,"/views/admin")));
+app.use(express.static(path.join(__dirname,"/views/admin/view_Participants")));
 app.use(body_parser.urlencoded({extended:false}));
 app.use((req,res,next)=>{
     if(req.session.username)

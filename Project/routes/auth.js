@@ -105,7 +105,8 @@ return res.redirect('/login');
 
 
 router.get("/about",(req,res,next)=>{
- 
+ if(req.session.username)
+ {
  const db=getdb();
  const user=req.session.username;
  db.collection("Student").findOne({"email":user},(err,data)=>{
@@ -126,7 +127,11 @@ router.get("/about",(req,res,next)=>{
             });
 
  });
-    
+}
+else
+{
+    return res.redirect("/login");
+}   
 });
 
 
