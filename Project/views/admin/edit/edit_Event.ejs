@@ -18,7 +18,7 @@
      
       <div class="main-panel">
         <div class="content-wrapper">
-          <form method="POST">
+          <form method="POST" enctype="multipart/form-data">
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
@@ -31,7 +31,7 @@
                          <div class="form-group">
                         <label for="exampleCategory">Select Event Category</label>
                           <select class="form-control" id="exampleCategory" name="cat">
-                            <option disabled selected><%= detail[i].Category_name %></option>
+                            <option readonly selected><%= detail[i].Category_name %></option>
                             <option>Dance</option>
                             <option>Singing</option>
                             <option>Others</option>
@@ -47,7 +47,7 @@
                       <div class="form-group">
                         <label for="exampleVenue">Select Event Venue</label>
                           <select class="form-control" id="exampleVenue" name="venue">
-                            <option disabled selected><%= detail[i].Sub_Events.Venue %></option>
+                            <option readonly selected><%= detail[i].Sub_Events.Venue %></option>
                             <option>Auditorium</option>
                             <option>OAT</option>
                             <option>Ground</option>
@@ -74,9 +74,12 @@
                           <div class="form-group">
                             <label for="exampleSponsers"> Sponsers </label>
                               <select class="form-control" id="exampleSponsers" name="sponsers" multiple>
+                                <% if(detail[i].Sub_Events.Sponsers!=null) {  %>
+                                
                                <% detail[i].Sub_Events.Sponsers.forEach(info=>{ %>
-                                <option selected disabled> <%= info.Sponser_name %></option>
-                              <% }) %>
+                                <option selected readonly> <%= info.Sponser_name %></option>
+                              <% })} %>
+
                                <% for(let a=0;a < sponser.length;a++) { %>
                                 
                                  <option><%= sponser[a].Sponser_name %></option>
@@ -87,7 +90,7 @@
                       <div class="form-group">
                           <label for="exampleFile">Event pdf</label>
                           
-                          <input type="file" class="form-control" id="exampleFile" name="pdf" value="<%= detail[i].Sub_Events.pdf %>"> 
+                          <input type="file" class="form-control" id="exampleFile" name="upload" value="<%= detail[i].Sub_Events.pdf %>"> 
                       </div>
                       <div class="form-group">
                         

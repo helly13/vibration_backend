@@ -1,4 +1,5 @@
 const express=require("express");
+const path=require("path");
 const getdb=require("../db").getdb;
 const router=express();
 
@@ -37,14 +38,34 @@ router.post("/add_Event",(req,res,next)=>{
        const time=req.body.time;
        const date=req.body.date;
        const judges=req.body.judges;
-       const spon=req.body.sponsers;
-       const pdf=req.body.pdf;
+        const spon=req.body.sponsers;
+       const pdf=req.body.upload;
 
       var db=getdb();
-       spon1=[spon,"xyz"];
-      db.collection("Sponsers").find({Sponser_name:{$in:spon1}}).toArray((err,data)=>{
+      if(!Array.isArray(spon))
+      {
+             if(spon==undefined)
+             {
+                    spon1=[];
+             }
+             else
+             {
+             spon1=[spon,"xyz"];
+             }
+      }
+      else
+      {
+             spon1=spon;
+      }
+     
        
+      db.collection("Sponsers").find({Sponser_name:{$in:spon1}}).toArray((err,data)=>{
+       if(data==null)
+       {
+              data=[];
+       }
         const store={
+             
                             Event_name:event_name,
                             Venue:venue,
                             Date:date,
@@ -181,11 +202,30 @@ router.post("/edit_Event",(req,res,next)=>{
        const time=req.body.time;
        const date=req.body.date;
        const judges=req.body.judges;
-       const spon=req.body.sponsers;
-       const pdf=req.body.pdf;
+       let spon=req.body.sponsers;
+       const pdf=req.file.path;
        const db=getdb();
-       console.log(spon);
-       console.log(judges + " " + spon + " "  );
+       if(!Array.isArray(spon))
+       {
+              if(spon==undefined)
+              {
+                     spon1=[];
+              }
+              else
+              {
+              spon1=[spon,"xyz"];
+              }
+       }
+       else
+       {
+              spon1=spon;
+       }
+   
+      
+       console.log(pdf);
+
+       db.collection("Sponsers").find({Sponser_name:{$in:spon1}}).toArray((err,data1)=>{
+              
        db.collection("Main_Event").updateOne({"Category_name":cat,"Sub_Events.Event_name":req.query.Event_name},{$set:{
              
               "Category_name":cat,
@@ -194,7 +234,7 @@ router.post("/edit_Event",(req,res,next)=>{
               "Sub_Events.$.Date":date,
               "Sub_Events.$.time":time,
               "Sub_Events.$.Judges":judges,
-              "Sub_Events.$.Sponsers":spon,
+               "Sub_Events.$.Sponsers":data1,
               "Sub_Events.$.pdf":pdf
 
        }},(err,data)=>{
@@ -208,5 +248,13 @@ router.post("/edit_Event",(req,res,next)=>{
                      res.redirect("/edit_Event?Event_name="+ req.query.Event_name);
               }
        })
+
+});
+});
+
+router.get("/download",(req,res,next)=>{
+       res.download(path.join(__dirname,"..","images","Vanprasth.png"));
 })
+
+
 module.exports=router;
