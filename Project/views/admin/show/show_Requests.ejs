@@ -24,42 +24,36 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Volunteer Details</h4>
+        <h4 class="card-title"> Request Details</h4>
         
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
               <tr>
                 <th>
-                  Name
+                  Event Name
                 </th>
                 <th>
-                  Email
+                  View Requests
                 </th>
-                <th>
-                  Contact
-                </th>
-               
               
               </tr>
             </thead>
             <tbody>
-                <% for(let i=0;i < detail.length; i++) { %>
-                    
-                   
+                <% for(let i=0;i < info.length; i++) { %>
+               <% info[i].Sub_Events.forEach(data=>{  %>
+
+                 
               <tr>
                 <td class="py-1">
-                  <%= detail[i].name %>
-                </td>
-             
+                  <%=data.Event_name %>
+                </td>  
                 <td>
-                  <%= detail[i].email %>
+                    <a class="btn btn-info" href="/view_Requests?event_name=<%= data.Event_name %>">View Requests</a>
                 </td>
-                <td>
-                  <%= detail[i].contact %>
-                </td>
+                
               </tr>
-              <%   }%>
+              <% })}%>
             </tbody>
           </table>
         </div>

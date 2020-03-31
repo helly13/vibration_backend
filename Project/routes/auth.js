@@ -2,14 +2,15 @@ const app=require("express");
 const path=require("path");
 const bcrypt=require("bcryptjs");
 const nodemailer=require('nodemailer');
-const sendgrid=require("nodemailer-sendgrid-transport");
+const transport=nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user:"aman.sharma122111@gmail.com",
+        pass:"aman$123"
+    }
+    });
+    
 
-const transport=nodemailer.createTransport(sendgrid({
-
-auth:{
-    api_key:"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"
-}
-}));
 const router=app.Router();
 
 const getdb=require("../db").getdb;
@@ -69,7 +70,7 @@ router.post("/reg",(req,res,next)=>{
  const con=req.body.contact;
  const bit=req.body.bit;
 bcrypt.hash(pass,12).then(data=>{
-     
+   console.log(bit);  
 const pass1=data;
 const data1={
      "name":name,
@@ -78,7 +79,8 @@ const data1={
      "password":pass1,
      "stu_status":bit,
      "product":[{}],
-      "volunteer_status":""
+      "volunteer_status":"",
+      "volunteer_event":[]
       
 }
 
@@ -93,10 +95,10 @@ db.collection("Student").insertOne(data1,function(err){
 
 });
 transport.sendMail({
-    to:"201912120@daiict.ac.in",
+    to:"sharma.aman1298@gmail.com",
     from:"aman.sharma122111@gmail.com",
-    subject:"Registration Successfull",
-    html:"<h2>Thanks for the Registration for Vibrants</h2>"
+    subject:"Registration Successful",
+    text:"Thanks for Registering in Vibrations"
      
 });
 return res.redirect('/login');

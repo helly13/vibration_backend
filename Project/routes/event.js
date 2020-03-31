@@ -1,5 +1,6 @@
 const express=require("express");
 const path=require("path");
+const mongodb=require("mongodb");
 const getdb=require("../db").getdb;
 const router=express();
 
@@ -116,15 +117,16 @@ router.get("/view_Event",(req,res,next)=>{
 router.get("/view_Participants",(req,res,next)=>{
        if(req.session.username)
        { 
+              const part=[];
                 const name=req.query.Event_name;
                 const db=getdb();
                 db.collection("Main_Event").aggregate([{$unwind:'$Sub_Events'},{$match:{'Sub_Events.Event_name':{$eq:name}}}]).toArray((err,data)=>{
+                    req.session.info=data;
+                     res.redirect("/process_participants");
+                            
+                      })
+                   
                      
-                     res.render("admin/show/view_Participants",{
-                            detail:data
-
-                     });
-                 });
        }
        else
        {
@@ -141,16 +143,94 @@ router.get("/view_Volunteer",(req,res,next)=>{
                 const db=getdb();
                 db.collection("Main_Event").aggregate([{$unwind:'$Sub_Events'},{$match:{'Sub_Events.Event_name':{$eq:name}}}]).toArray((err,data)=>{
                     
-                     res.render("admin/show/view_Volunteer",{
-                            detail:data
-
+                     req.session.info=data;
+                     res.redirect("/process_volunteer");
                      });
-                 });
        }
        else
        {
               res.redirect("/login");
        }
+});
+
+
+router.get("/process_volunteer",(req,res,next)=>{
+       if(req.session.username)
+       {
+       const db=getdb();
+       const info=req.session.info;
+       console.log(info);
+       let stud=[];
+       for(let i=0; i<info.length; i++)
+       {
+              info[i].Sub_Events.Volunteer.forEach(data=>{
+                     
+                     const id2=mongodb.ObjectID('5e79bd7bc5808a541b546d48');
+                     const id1=mongodb.ObjectID(data);
+                     stud.push(id1);
+                     stud.push(id2);
+                       
+
+              })
+              
+              
+       }
+      
+     
+    
+       db.collection("Student").find({_id:{$in:stud}}).toArray((err,data2)=>{
+              
+              if(err)
+              console.log("error")
+              else 
+              res.render("admin/show/view_Volunteer",{
+                     detail:data2
+              })
+       })
+}
+else
+{
+       res.redirect("/login");
+}
+});
+router.get("/process_participants",(req,res,next)=>{
+       if(req.session.username)
+       {
+       const db=getdb();
+       const info=req.session.info;
+       console.log(info);
+       let stud=[];
+       for(let i=0; i<info.length; i++)
+       {
+              info[i].Sub_Events.participation.forEach(data=>{
+                     
+                     const id2=mongodb.ObjectID('5e79bd7bc5808a541b546d48');
+                     const id1=mongodb.ObjectID(data);
+                     stud.push(id1);
+                     stud.push(id2);
+                       
+
+              })
+              
+              
+       }
+      
+     
+    
+       db.collection("Student").find({_id:{$in:stud}}).toArray((err,data2)=>{
+              
+              if(err)
+              console.log("error")
+              else 
+              res.render("admin/show/view_Participants",{
+                     detail:data2
+              })
+       })
+}
+else
+{
+       res.redirect("/login");
+}
 });
 
 
@@ -252,9 +332,6 @@ router.post("/edit_Event",(req,res,next)=>{
 });
 });
 
-router.get("/download",(req,res,next)=>{
-       res.download(path.join(__dirname,"..","images","Vanprasth.png"));
-})
 
 
 module.exports=router;

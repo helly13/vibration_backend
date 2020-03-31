@@ -8,6 +8,7 @@ const forgotRouter=require("./routes/forgot");
 const adminRouter=require("./routes/event");
 const ExpenseRouter=require("./routes/expense");
 const FundRouter=require("./routes/fund");
+const RequestRouter=require("./routes/requests");
 const path=require("path");
 const session=require("express-session");
 const app=express();
@@ -46,6 +47,7 @@ app.use(forgotRouter);
 app.use(adminRouter);
 app.use(ExpenseRouter);
 app.use(FundRouter);
+app.use(RequestRouter);
 
 mongoconnect(()=>{
     app.listen(3000);
