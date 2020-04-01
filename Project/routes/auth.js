@@ -1,6 +1,7 @@
 const app=require("express");
 const path=require("path");
 const bcrypt=require("bcryptjs");
+const mongodb=require("mongodb");
 const nodemailer=require('nodemailer');
 const transport=nodemailer.createTransport({
     service:"gmail",
@@ -40,8 +41,49 @@ router.post("/login",(req,res,next)=>{
               bcrypt.compare(password,data.password).then(domatch=>{
                     if(domatch)
                     {
-                    req.session.username=username;  
-                    return res.redirect("/home");
+                       if(data.com_status=='1')
+                       {
+                           db.collection("Committee").findOne({_id:data.com_id},(err,data2)=>{
+                            
+                               if(data2._id=='5e6efd28dda9c64eccbe37b8')
+                               {
+                                   
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6efef74429714eccbd6ab9')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6eff464429714eccbd6aba')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6eff694429714eccbd6abb')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6eff864429714eccbd6abc')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6effa44429714eccbd6abd')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                           })
+                       }
+                       else
+                       {
+                        req.session.username=username;  
+                        return res.redirect("/home");
+                       }    
+                    
                     }
                     else
                     {
@@ -80,7 +122,8 @@ const data1={
      "stu_status":bit,
      "product":[{}],
       "volunteer_status":"",
-      "volunteer_event":[]
+      "volunteer_event":[],
+      "com_status":0
       
 }
 

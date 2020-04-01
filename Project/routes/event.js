@@ -8,10 +8,52 @@ const router=express();
 router.get("/admin_core",(req,res,next)=>{
   if(req.session.username)
   {
+       let stu_cnt;
+       let exp_cnt;
+       let fund;
+             const db=getdb();
+          db.collection("Student").findOne({email:req.session.username},(err,data)=>{
+                 const com_id=data.com_id;
+               
+                
+                
+                 db.collection("Committee").findOne({_id:com_id},(err,data2)=>{
+                        
+                        if(data2.type=='Core')
+                        {
+                            db.collection("Funds").findOne({committee_id:com_id},(err,data3)=>{
+                               
+                               
+                                   fund=data3.total_fund;
+                            
+                            });
+                        }
+                        else
+                        {
+                               db.collection("Funds").findOne({committee_id:com_id},(err,data4)=>{
+                                      fund=data4.fund_allocated;
+                            
+                               })
+                        }
+                        db.collection("Student").find({com_id:com_id}).count((err,data5)=>{
+                     
+                          
+                           db.collection("Expenses").find({committee_id:com_id}).count((err,data1)=>{
+                            res.render("admin/index",{
+                                   user:req.session.username,
+                                   fund:fund,
+                                   stu_cnt:data5,
+                                   exp_cnt:data1
+                               })
+                            
+                         });
+                         
+                     });
+                       
+                 })
 
-       res.render("admin/index",{
-              user:req.session.username
-       });
+          })
+       
   }
   else
   {
