@@ -1,5 +1,6 @@
 const http=require("http");
 const express=require("express");
+
 const multer=require("multer");
 const body_parser=require("body-parser");
 const authRouter=require('./routes/auth');
@@ -12,6 +13,7 @@ const path=require("path");
 const session=require("express-session");
 const app=express();
 const flash=require("connect-flash");
+const FaqRouter=require("./routes/faq");
 const filestorage=multer.diskStorage(
     {
         destination:(req,file,cb)=>{
@@ -40,6 +42,7 @@ res.locals.user=req.session.username;
     }
     next();
 });
+app.use(FaqRouter);
 app.use(authRouter);
 app.use(homeRouter);
 app.use(forgotRouter);
@@ -50,7 +53,6 @@ app.use(FundRouter);
 mongoconnect(()=>{
     app.listen(3000);
 });
-
 
 
 
