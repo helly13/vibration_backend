@@ -52,9 +52,9 @@ router.post("/login",(req,res,next)=>{
                                 return res.redirect("/admin_core");
                                }
                                else if(data2._id=='5e6efef74429714eccbd6ab9')
-                               {
+                               {07
                                 req.session.username=username;  
-                                return res.redirect("/admin_core");
+                                return res.redirect("/admin_sponser");
                                }
                                else if(data2._id=='5e6eff464429714eccbd6aba')
                                {
@@ -120,33 +120,87 @@ const data1={
      "email":email,
      "password":pass1,
      "stu_status":bit,
-     "product":[{}],
+     "product":[],
       "volunteer_status":"",
       "volunteer_event":[],
-      "com_status":0
+      "com_status":'0'
       
 }
 
 const db=getdb();
+if(bit==null)
+{
 db.collection("Student").insertOne(data1,function(err){
     if(err)
     {
         console.log("Error Occured during Insertion");
     }
-    console.log("Data Innerted Successfully");
+    else
+    {
+    console.log("Data Inserted Successfully");
+    transport.sendMail({
+        to:"sharma.aman1298@gmail.com",
+        from:"aman.sharma122111@gmail.com",
+        subject:"Registration Successful",
+        text:"Thanks for Registering in Vibrations"
+         
+    });
+    return res.redirect('/login');
+}
+});
+}
+else
+{
+            req.session.data=data1;
+           res.redirect("/reg1");
+}
 });
 
-});
-transport.sendMail({
-    to:"sharma.aman1298@gmail.com",
-    from:"aman.sharma122111@gmail.com",
-    subject:"Registration Successful",
-    text:"Thanks for Registering in Vibrations"
-     
-});
-return res.redirect('/login');
 
 });
+
+
+
+router.get("/reg1",(req,res,next)=>{
+     res.render("reg1");
+});
+
+
+
+
+router.post("/reg1",(req,res,next)=>{
+      const data1=req.session.data;
+      const id=req.body.id;
+      const year=req.body.year;
+      const stream=req.body.stream;
+      const data2={
+          'student_id':id,
+          'year':year,
+          'stream':stream
+      }
+     Object.assign(data1,data2)
+      const db=getdb();
+      db.collection("Student").insertOne(data1,function(err){
+        if(err)
+        {
+            console.log("Error Occured during Insertion");
+        }
+        else
+        {
+        console.log("Data Inserted Successfully");
+        transport.sendMail({
+            to:"sharma.aman1298@gmail.com",
+            from:"aman.sharma122111@gmail.com",
+            subject:"Registration Successful",
+            text:"Thanks for Registering in Vibrations"
+             
+        });
+        res.redirect("/login");
+    }
+    });
+})
+
+
 
 
 router.get("/about",(req,res,next)=>{
@@ -178,6 +232,8 @@ else
     return res.redirect("/login");
 }   
 });
+
+
 
 
 router.post("/about",(req,res,next)=>{
