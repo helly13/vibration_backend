@@ -47,28 +47,27 @@
             </thead>
             <tbody>
                 <% for(let i=0;i < detail.length; i++) { %>
-                    <% detail[i].Sub_Events.participation.forEach(data1=>{ %>
                    
               <tr>
                 <td class="py-1">
-                  <%= data1.student_name %>
+                  <%= detail[i].name %>
                 </td>
              
                 <td>
-                  <%= data1.email %>
+                  <%= detail[i].email %>
                 </td>
                 <td>
-                  <%= data1.contact %>
+                  <%= detail[i].contact %>
                 </td>
                 <td>
-                  <% if (data1.student_status==true || data1.student_status==on) { %>
+                  <% if (detail[i].stu_status==true || detail[i].stu_status=='on') { %>
                    BIT
                    <% } else {%>
                    NON-BIT 
                    <% } %>
                 </td>
               </tr>
-              <% })  }%>
+              <%  }%>
             </tbody>
           </table>
         </div>

@@ -1,15 +1,17 @@
 const app=require("express");
 const path=require("path");
 const bcrypt=require("bcryptjs");
+const mongodb=require("mongodb");
 const nodemailer=require('nodemailer');
-const sendgrid=require("nodemailer-sendgrid-transport");
+const transport=nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user:"aman.sharma122111@gmail.com",
+        pass:"aman$123"
+    }
+    });
+    
 
-const transport=nodemailer.createTransport(sendgrid({
-
-auth:{
-    api_key:"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"
-}
-}));
 const router=app.Router();
 
 const getdb=require("../db").getdb;
@@ -39,8 +41,49 @@ router.post("/login",(req,res,next)=>{
               bcrypt.compare(password,data.password).then(domatch=>{
                     if(domatch)
                     {
-                    req.session.username=username;  
-                    return res.redirect("/home");
+                       if(data.com_status=='1')
+                       {
+                           db.collection("Committee").findOne({_id:data.com_id},(err,data2)=>{
+                            
+                               if(data2._id=='5e6efd28dda9c64eccbe37b8')
+                               {
+                                   
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6efef74429714eccbd6ab9')
+                               {07
+                                req.session.username=username;  
+                                return res.redirect("/admin_sponser");
+                               }
+                               else if(data2._id=='5e6eff464429714eccbd6aba')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6eff694429714eccbd6abb')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6eff864429714eccbd6abc')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                               else if(data2._id=='5e6effa44429714eccbd6abd')
+                               {
+                                req.session.username=username;  
+                                return res.redirect("/admin_core");
+                               }
+                           })
+                       }
+                       else
+                       {
+                        req.session.username=username;  
+                        return res.redirect("/home");
+                       }    
+                    
                     }
                     else
                     {
@@ -69,7 +112,7 @@ router.post("/reg",(req,res,next)=>{
  const con=req.body.contact;
  const bit=req.body.bit;
 bcrypt.hash(pass,12).then(data=>{
-     
+   console.log(bit);  
 const pass1=data;
 const data1={
      "name":name,
@@ -77,31 +120,87 @@ const data1={
      "email":email,
      "password":pass1,
      "stu_status":bit,
-     "product":[{}],
-      "volunteer_status":""
+     "product":[],
+      "volunteer_status":"",
+      "volunteer_event":[],
+      "com_status":'0'
       
 }
 
 const db=getdb();
+if(bit==null)
+{
 db.collection("Student").insertOne(data1,function(err){
     if(err)
     {
         console.log("Error Occured during Insertion");
     }
-    console.log("Data Innerted Successfully");
+    else
+    {
+    console.log("Data Inserted Successfully");
+    transport.sendMail({
+        to:"sharma.aman1298@gmail.com",
+        from:"aman.sharma122111@gmail.com",
+        subject:"Registration Successful",
+        text:"Thanks for Registering in Vibrations"
+         
+    });
+    return res.redirect('/login');
+}
+});
+}
+else
+{
+            req.session.data=data1;
+           res.redirect("/reg1");
+}
 });
 
-});
-transport.sendMail({
-    to:"201912120@daiict.ac.in",
-    from:"aman.sharma122111@gmail.com",
-    subject:"Registration Successfull",
-    html:"<h2>Thanks for the Registration for Vibrants</h2>"
-     
-});
-return res.redirect('/login');
 
 });
+
+
+
+router.get("/reg1",(req,res,next)=>{
+     res.render("reg1");
+});
+
+
+
+
+router.post("/reg1",(req,res,next)=>{
+      const data1=req.session.data;
+      const id=req.body.id;
+      const year=req.body.year;
+      const stream=req.body.stream;
+      const data2={
+          'student_id':id,
+          'year':year,
+          'stream':stream
+      }
+     Object.assign(data1,data2)
+      const db=getdb();
+      db.collection("Student").insertOne(data1,function(err){
+        if(err)
+        {
+            console.log("Error Occured during Insertion");
+        }
+        else
+        {
+        console.log("Data Inserted Successfully");
+        transport.sendMail({
+            to:"sharma.aman1298@gmail.com",
+            from:"aman.sharma122111@gmail.com",
+            subject:"Registration Successful",
+            text:"Thanks for Registering in Vibrations"
+             
+        });
+        res.redirect("/login");
+    }
+    });
+})
+
+
 
 
 router.get("/about",(req,res,next)=>{
@@ -133,6 +232,8 @@ else
     return res.redirect("/login");
 }   
 });
+
+
 
 
 router.post("/about",(req,res,next)=>{

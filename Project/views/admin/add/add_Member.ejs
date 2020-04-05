@@ -24,7 +24,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Volunteer Details</h4>
+        <h4 class="card-title">Add Member</h4>
         
         <div class="table-responsive">
           <table class="table table-striped">
@@ -39,25 +39,32 @@
                 <th>
                   Contact
                 </th>
+                <th>
+                  Add
+                </th>
                
               
               </tr>
             </thead>
             <tbody>
-                <% for(let i=0;i < detail.length; i++) { %>
-                    
+                <% for(let i=0;i < info.length; i++) { %>
+                   
                    
               <tr>
                 <td class="py-1">
-                  <%= detail[i].name %>
+                  <%= info[i].name %>
                 </td>
              
                 <td>
-                  <%= detail[i].email %>
+                  <%= info[i].email %>
                 </td>
                 <td>
-                  <%= detail[i].contact %>
+                  <%= info[i].contact %>
                 </td>
+                <td>
+                   <a class="btn btn-info" href="/process_Member?stud=<%=info[i]._id%>">Accept</a>
+                </td>
+                
               </tr>
               <%   }%>
             </tbody>
