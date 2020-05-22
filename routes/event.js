@@ -444,6 +444,8 @@ router.post("/participate_Events", (req, res, next) => {
     let hasParticipated = 0;
     let stu_id = "";
     const db = getdb();
+    let already_participated = "You have already participated in this event";
+    let successfully_participated = "Your participation request is sucessfully accepted";
     // console.log(req.body.email);
     db.collection("Main_Event").aggregate([{ $unwind: '$Sub_Events' }, { $match: { 'Sub_Events.Event_name': { $eq: eve } } }]).toArray((err, data) => {
             let participationList = data[0].Sub_Events.participation;
@@ -455,7 +457,8 @@ router.post("/participate_Events", (req, res, next) => {
                     for (let i = 0; i < participationList.length; i++) {
                         if (participationList[i]._id.toString() === stu_id.toString()) {
                             hasParticipated = 1;
-                            console.log("You have already pariticipated in this event");
+                            res.json(already_participated);
+                            console.log("You have already participated in this event");
 
                         }
                     }
@@ -476,7 +479,8 @@ router.post("/participate_Events", (req, res, next) => {
                         if (err) {
                             console.log("error");
                         } else {
-                            res.json(data1);
+                            // res.json(data1);
+                            res.json(successfully_participated);
                             console.log("Your participation request is sucessfully accepted");
                         }
                     })
