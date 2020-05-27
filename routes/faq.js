@@ -53,15 +53,28 @@ router.post("/faq", (req, res, next) => {
     console.log(req.body);
     db.collection('Student').find({ "email": req.body.email }).toArray((err, data) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        console.log("in::");
-        console.log(data[0]._id);
-        var data1 = {
-            "Student_id": data[0]._id,
-            "Query_String": req.body.Query_String,
-            "reply_string": "",
-            "status": "1",
-            "ans_status": "0"
+        if (data) {
+            console.log(data[0]._id);
+            var data1 = {
+
+                "Student_id": data[0]._id,
+                "Query_String": req.body.Query_String,
+                "Email": req.body.email,
+                "reply_string": "",
+                "status": "1",
+                "ans_status": "0"
+            }
+        } else {
+            var data1 = {
+                "Email": req.body.email,
+                "Query_String": req.body.Query_String,
+                "reply_string": "",
+                "status": "1",
+                "ans_status": "0"
+            }
         }
+
+
         db.collection("QueryFeed").insertOne(data1, function(err) {
             if (err) {
                 console.log("Error Occured during Insertion");
