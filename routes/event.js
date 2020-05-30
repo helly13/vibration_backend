@@ -375,30 +375,19 @@ router.get("/event_team", (req, res, next) => {
 
 router.get("/show_Events", (req, res, next) => {
     {
-
-        // res.setHeader('Content-Type', 'image/jpg');
-
         const db = getdb();
-        // console.log("inside show event");
         db.collection("Main_Event").aggregate([{ $unwind: '$Sub_Events' }]).toArray((err, data) => {
-            //      if (!err) {
-            //          console.log(data);
-            //          res.json(data);
-            //          // res.render("user/show/show_Events",{Events:data});
-            //      }
             res.setHeader('Access-Control-Allow-Origin', '*');
             if (err) {
                 res.json(err);
             } else {
                 res.json(data);
-                console.log(data);
+                // console.log(data);
             }
 
 
         });
     }
-
-
 });
 
 router.get("/show_Events/:Event_name", (req, res, next) => {
@@ -412,7 +401,7 @@ router.get("/show_Events/:Event_name", (req, res, next) => {
                 res.json(err);
             } else {
                 res.json(data);
-                console.log(data);
+                // console.log(data);
             }
 
 
@@ -495,5 +484,23 @@ router.post("/participate_Events", (req, res, next) => {
         //     res.redirect("/login");
         // }
 });
+
+
+router.get("/eventgallary", (req, res, next) => {
+    {
+        const db = getdb();
+        db.collection("Images").find().toArray((err, data) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(data);
+                // console.log(data);
+            }
+        });
+    }
+});
+
+
 
 module.exports = router;

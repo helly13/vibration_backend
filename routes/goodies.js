@@ -138,7 +138,7 @@ router.get("/view_Orders", (req, res, next) => {
 router.get("/show_Products", (req, res, next) => {
     {
         const db = getdb();
-        db.collection("Product").find({}).toArray((err, data) => {
+        db.collection("Product").find().toArray((err, data) => {
             // res.render("user/show/show_Products", {
             if (err) {
                 res.json(err);
@@ -152,26 +152,28 @@ router.get("/show_Products", (req, res, next) => {
 
 });
 
-router.post("/show_Products", (req, res, next) => {
+router.post("/adding_Products", (req, res, next) => {
 
-    const userId = req.session.username;
+    const userId = req.body.email;
 
     const db = getdb();
     db.collection("Student").findOne({ "email": userId }, (err, data) => {
         if (data) {
             let productList = data.product;
             let isOrdered = 0;
-            const prodid = mongodb.ObjectID(req.query.goodiesid);
+            const prodid = mongodb.ObjectID(req.body.Product_id);
             for (let i = 0; i < productList.length; i++) {
                 if (productList[i].toString() === prodid.toString()) {
                     console.log("Product already Added to your cart. You can order only one unit of a particular type of product.");
                     isOrdered = 1;
+                    res.json(isOrdered);
                     break;
                 }
             }
             if (isOrdered === 0) {
                 db.collection("Student").update({ "email": userId }, { $push: { product: prodid } }, function(err, result) {
                     if (result) {
+                        res.json(isOrdered);
                         console.log("Product Added Successfully to cart");
                     } else {
                         console.log("Error Occured during adding product to cart");
@@ -181,9 +183,10 @@ router.post("/show_Products", (req, res, next) => {
 
 
             }
-        } else {
-            res.redirect('/login');
         }
+        // else {
+        //     res.redirect('/login');
+        // }
     });
 });
 
@@ -202,6 +205,7 @@ router.get("/show_Order", (req, res, next) => {
             }
         });
 });
+
 router.post('/delete_from_Order', (req, res, next) => {
 
     const userId = req.session.username;
