@@ -377,7 +377,6 @@ router.get("/show_Events", (req, res, next) => {
     {
         const db = getdb();
         db.collection("Main_Event").aggregate([{ $unwind: '$Sub_Events' }]).toArray((err, data) => {
-            res.setHeader('Access-Control-Allow-Origin', '*');
             if (err) {
                 res.json(err);
             } else {
@@ -394,7 +393,6 @@ router.get("/show_Events/:Event_name", (req, res, next) => {
     {
         const db = getdb();
         console.log(req.params.Event_name);
-        res.setHeader('Access-Control-Allow-Origin', '*');
         db.collection("Main_Event").aggregate([{ $unwind: '$Sub_Events' }, { $match: { 'Sub_Events.Event_name': req.params.Event_name } }]).toArray((err, data) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             if (err) {
@@ -446,8 +444,8 @@ router.post("/participate_Events", (req, res, next) => {
                 if (stu) {
                     // console.log(stu._id);
                     stu_id = stu._id;
-                    if (data[0].Sub_Events.teamstatus == "off") {
-                        for (let i = 0; i < participationList.length; i++) {
+                    if (data[0].Sub_Events.teamstatus == "off" || data[0].Sub_Events.teamstatus == null) {
+                        for (let i = 0; i < participationList.length - 1; i++) {
                             if (participationList[i]._id.toString() === stu_id.toString()) {
                                 hasParticipated = 1;
                                 res.json(already_participated);
@@ -457,9 +455,9 @@ router.post("/participate_Events", (req, res, next) => {
                         }
                     } else if (data[0].Sub_Events.teamstatus == "on") {
                         console.log(stu_id);
-                        for (let i = 0; i < teamList.length; i++) {
+                        for (let i = 0; i < teamList.length - 1; i++) {
                             if (teamList[i].Student_id.toString() === stu_id.toString()) {
-                                hasParticipated = 1;
+                                hasParticipated = 2;
                                 res.json(already_participated);
                                 console.log("You have already participated in this event");
 
