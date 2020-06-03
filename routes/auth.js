@@ -6,8 +6,8 @@ const nodemailer = require('nodemailer');
 const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "aman.sharma122111@gmail.com",
-        pass: "aman$123"
+        user: "bitvibrationsjaipur@gmail.com",
+        pass: "BitV@123."
     }
 });
 
@@ -32,11 +32,12 @@ router.post("/login", (req, res, next) => {
 
     const db = getdb();
     const user = db.collection("Student");
+    const not_found = "not found";
     user.findOne({ "email": username }, (err, data) => {
-        if (!data)
-
+        if (!data) {
+            // res.json(not_found);
             return res.redirect('/login');
-        else {
+        } else {
             bcrypt.compare(password, data.password).then(domatch => {
                 if (domatch) {
                     if (data.com_status == '1') {
@@ -119,7 +120,7 @@ router.post("/reg", (req, res, next) => {
                     console.log("Data Inserted Successfully");
                     transport.sendMail({
                         to: "sharma.aman1298@gmail.com",
-                        from: "aman.sharma122111@gmail.com",
+                        from: "bitvibrationsjaipur@gmail.com",
                         subject: "Registration Successful",
                         text: "Thanks for Registering in Vibrations"
 
@@ -164,7 +165,7 @@ router.post("/reg1", (req, res, next) => {
             console.log("Data Inserted Successfully");
             transport.sendMail({
                 to: "sharma.aman1298@gmail.com",
-                from: "aman.sharma122111@gmail.com",
+                from: "bitvibrationsjaipur@gmail.com",
                 subject: "Registration Successful",
                 text: "Thanks for Registering in Vibrations"
 

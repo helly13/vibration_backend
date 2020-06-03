@@ -15,6 +15,7 @@ const MemberRouter = require("./routes/member");
 const AdminRouter = require("./routes/admin"); //added file recently by helly
 const VolunteerRouter = require("./routes/volunteer"); //added file from scratch by helly
 const GoodiesRouter = require("./routes/goodies"); //added file by helly
+const StudentRouter = require("./routes/student"); //added by helly for getting student data through email
 const path = require("path");
 const session = require("express-session");
 const app = express();
@@ -70,6 +71,7 @@ app.use(MemberRouter);
 app.use(AdminRouter);
 app.use(VolunteerRouter);
 app.use(GoodiesRouter);
+app.use(StudentRouter);
 app.use(cors())
 
 mongoconnect(() => {
