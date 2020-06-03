@@ -424,9 +424,6 @@ router.get("/participate_Events", (req, res, next) => {
 });
 
 router.post("/participate_Events", (req, res, next) => {
-    // if (req.session.username) {
-
-    // console.log(req.body);
     const eve = req.body.event;
     let hasParticipated = 0;
     let stu_id = "";
@@ -437,88 +434,83 @@ router.post("/participate_Events", (req, res, next) => {
     let successfully_team_participated = "Your participation request as team is sucessfully accepted";
     // console.log(req.body.email);
     db.collection("Main_Event").aggregate([{ $unwind: '$Sub_Events' }, { $match: { 'Sub_Events.Event_name': { $eq: eve } } }]).toArray((err, data) => {
-            let participationList = data[0].Sub_Events.participation;
-            let teamList = data[0].Sub_Events.team;
-            console.log(teamList);
-            db.collection("Student").findOne({ "email": req.body.email }, (err, stu) => {
-                if (stu) {
-                    // console.log(stu._id);
-                    stu_id = stu._id;
-                    if (data[0].Sub_Events.teamstatus == "off" || data[0].Sub_Events.teamstatus == null) {
-                        for (let i = 0; i < participationList.length - 1; i++) {
-                            if (participationList[i]._id.toString() === stu_id.toString()) {
-                                hasParticipated = 1;
-                                res.json(already_participated);
-                                console.log("You have already participated in this event");
+        let participationList = data[0].Sub_Events.participation;
+        let teamList = data[0].Sub_Events.team;
+        console.log(teamList);
+        db.collection("Student").findOne({ "email": req.body.email }, (err, stu) => {
+            if (stu) {
+                // console.log(stu._id);
+                stu_id = stu._id;
+                if (data[0].Sub_Events.teamstatus == null) {
+                    for (let i = 0; i < participationList.length; i++) {
+                        if (participationList[i]._id.toString() === stu_id.toString()) {
+                            hasParticipated = 1;
+                            res.json(already_participated);
+                            console.log("You have already participated in this event");
 
-                            }
-                        }
-                    } else if (data[0].Sub_Events.teamstatus == "on") {
-                        console.log(stu_id);
-                        for (let i = 0; i < teamList.length - 1; i++) {
-                            if (teamList[i].Student_id.toString() === stu_id.toString()) {
-                                hasParticipated = 2;
-                                res.json(already_participated);
-                                console.log("You have already participated in this event");
-
-                            }
                         }
                     }
-
-                }
-                // console.log(stu_id);
-                if (hasParticipated === 0) {
-                    // console.log(data[0].Sub_Events.teamstatus);
+                } else if (data[0].Sub_Events.teamstatus == "on") {
                     console.log(stu_id);
-                    if (data[0].Sub_Events.teamstatus == "off") {
-                        const participants = {
-                            _id: stu_id,
-                            // team: req.body.team,
-                            institute: req.body.institute,
-                            email: req.body.email,
-                            phone: req.body.phone,
+                    for (let i = 0; i < teamList.length; i++) {
+                        if (teamList[i].Student_id.toString() === stu_id.toString()) {
+                            hasParticipated = 1;
+                            res.json(already_participated);
+                            console.log("You have already participated in this event");
                         }
-                        db.collection("Main_Event").updateOne({ "Sub_Events.Event_name": req.body.event }, { $push: { "Sub_Events.$.participation": participants } }, (err, data1) => {
-                            if (err) {
-                                console.log("error");
-                            } else {
-                                // res.json(data1);
-                                res.json(successfully_participated);
-                                console.log("Your participation request is sucessfully accepted");
-                            }
-                        })
-
-                    } else if (data[0].Sub_Events.teamstatus == "on") {
-                        const teams = {
-                            Student_id: stu_id,
-                            name: req.body.team,
-                            institute: req.body.institute,
-                            team_size: req.body.team_size
-                        }
-                        db.collection("Main_Event").updateOne({ "Sub_Events.Event_name": req.body.event }, { $push: { "Sub_Events.$.team": teams } }, (err, data1) => {
-                            if (err) {
-                                console.log("error");
-                            } else {
-                                // res.json(data1);
-                                res.json(successfully_team_participated);
-                                console.log("Your participation request as team is sucessfully accepted");
-                            }
-                        })
-                        console.log("success")
-
                     }
+                }
 
-                    // console.log(participants);
+            }
+            // console.log(stu_id);
+            if (hasParticipated === 0) {
+                // console.log(data[0].Sub_Events.teamstatus);
+                console.log(stu_id);
+                if (data[0].Sub_Events.teamstatus == null) {
+                    const participants = {
+                        _id: stu_id,
+                        // team: req.body.team,
+                        institute: req.body.institute,
+                        email: req.body.email,
+                        phone: req.body.phone,
+                    }
+                    db.collection("Main_Event").updateOne({ "Sub_Events.Event_name": req.body.event }, { $push: { "Sub_Events.$.participation": participants } }, (err, data1) => {
+                        if (err) {
+                            console.log("error");
+                        } else {
+                            // res.json(data1);
+                            res.json(successfully_participated);
+                            console.log("Your participation request is sucessfully accepted");
+                        }
+                    })
+
+                } else if (data[0].Sub_Events.teamstatus == "on") {
+                    const teams = {
+                        Student_id: stu_id,
+                        name: req.body.team,
+                        institute: req.body.institute,
+                        team_size: req.body.team_size
+                    }
+                    db.collection("Main_Event").updateOne({ "Sub_Events.Event_name": req.body.event }, { $push: { "Sub_Events.$.team": teams } }, (err, data1) => {
+                        if (err) {
+                            console.log("error");
+                        } else {
+                            // res.json(data1);
+                            res.json(successfully_team_participated);
+                            console.log("Your participation request as team is sucessfully accepted");
+                        }
+                    })
+                    console.log("success")
 
                 }
 
 
-            })
+            }
+
+
         })
-        // } 
-        // else {
-        //     res.redirect("/login");
-        // }
+    })
+
 });
 
 

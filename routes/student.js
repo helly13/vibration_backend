@@ -79,12 +79,10 @@ router.post("/signup", (req, res, next) => {
     const con = req.body.contact;
     const bit = req.body.bit;
     bcrypt.hash(pass, 12).then(data => {
-        console.log(bit);
         const pass1 = data;
-
-
         const db = getdb();
         if (bit == null) {
+            console.log("null inside");
             const data1 = {
                 "name": name,
                 "contact": con,
@@ -97,11 +95,12 @@ router.post("/signup", (req, res, next) => {
                 "com_status": '0'
             }
 
-            db.collection("Student").insertOne(data1, function(err, data) {
+            db.collection("Student").insertOne(data1, function(err, data1) {
                 if (err) {
                     console.log("Error Occured during Insertion");
                 } else {
                     console.log("Data Inserted Successfully");
+                    res.json(data1);
                     transport.sendMail({
                         to: "thakkerrpiyu@gmail.com",
                         from: "bitvibrationsjaipur@gmail.com",
@@ -109,12 +108,12 @@ router.post("/signup", (req, res, next) => {
                         text: "Thanks for Registering in Vibrations"
 
                     });
-                    res.json(data);
                     // console.log(data);
                     // return res.redirect('/login');
                 }
             });
         } else {
+            console.log("bit inside");
             const bitdata = {
                 "name": name,
                 "contact": con,
@@ -130,11 +129,12 @@ router.post("/signup", (req, res, next) => {
                 'stream': req.body.stream
 
             }
-            db.collection("Student").insertOne(bitdata, function(err, data) {
+            db.collection("Student").insertOne(bitdata, function(err, data2) {
                 if (err) {
                     console.log("Error Occured during Insertion");
                 } else {
                     console.log("Data Inserted Successfully");
+                    res.json(data2);
                     transport.sendMail({
                         to: "thakkerrpiyu@gmail.com",
                         from: "bitvibrationsjaipur@gmail.com",
@@ -142,7 +142,6 @@ router.post("/signup", (req, res, next) => {
                         text: "Thanks for Registering in Vibrations BIT"
 
                     });
-                    res.json(data);
                     // console.log(data);
                     // return res.redirect('/login');
                 }
